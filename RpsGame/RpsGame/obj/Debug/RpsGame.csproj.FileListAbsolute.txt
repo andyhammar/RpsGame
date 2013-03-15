@@ -1,0 +1,5 @@
+C:\dev\labs\khelg-q1-2013\RpsGame\RpsGame\bin\Debug\RpsGame.dll
+C:\dev\labs\khelg-q1-2013\RpsGame\RpsGame\bin\Debug\RpsGame.pdb
+C:\dev\labs\khelg-q1-2013\RpsGame\RpsGame\obj\Debug\RpsGame.csprojResolveAssemblyReference.cache
+C:\dev\labs\khelg-q1-2013\RpsGame\RpsGame\obj\Debug\RpsGame.dll
+C:\dev\labs\khelg-q1-2013\RpsGame\RpsGame\obj\Debug\RpsGame.pdb
