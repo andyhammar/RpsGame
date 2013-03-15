@@ -8,13 +8,13 @@ using RpsGame.Events;
 
 namespace RpsGame.Model
 {
-    public class Game : 
-        IHandleCommand<CreateGame>, 
+    public class Game :
+        IHandleCommand<CreateGame>,
         IHandleCommand<MakeMove>,
         IHandleCommand<RageQuit>,
-        IHandleEvent<GameCreated>, 
-        IHandleEvent<MoveMade>, 
-        IHandleEvent<RoundWon>, 
+        IHandleEvent<GameCreated>,
+        IHandleEvent<MoveMade>,
+        IHandleEvent<RoundWon>,
         IHandleEvent<GameWon>,
         IHandleEvent<RoundTied>
     {
@@ -39,12 +39,15 @@ namespace RpsGame.Model
         public IEnumerable<IEvent> Handle(CreateGame createGame)
         {
             Validate(createGame);
-            return new[] { new GameCreated(
-                createGame.AggregateId, 
-                createGame.CreatedBy, 
-                createGame.Opponent, 
-                createGame.Reason, 
-                createGame.FirstTo) };
+            return new[]
+                       {
+                           new GameCreated(
+                               createGame.AggregateId,
+                               createGame.CreatedBy,
+                               createGame.Opponent,
+                               createGame.Reason,
+                               createGame.FirstTo)
+                       };
         }
 
         public void Handle(MoveMade ev)
@@ -93,8 +96,8 @@ namespace RpsGame.Model
 
                 if (roundWon == null)
                     yield break;
-                if(_score[roundWon.Winner] == _firstTo - 1)
-                    yield return new GameWon(command.AggregateId,roundWon.Winner,roundWon.Loser);
+                if (_score[roundWon.Winner] == _firstTo - 1)
+                    yield return new GameWon(command.AggregateId, roundWon.Winner, roundWon.Loser);
             }
         }
 
@@ -106,7 +109,6 @@ namespace RpsGame.Model
             if (command.Move.IsWinner(otherMove.Value.Value))
                 return new RoundWon(command.AggregateId, command.Player, otherMove.Key);
             return new RoundWon(command.AggregateId, otherMove.Key, command.Player);
-
         }
 
         private void Validate(MakeMove makeMove)
@@ -122,6 +124,7 @@ namespace RpsGame.Model
 
         public IEnumerable<IEvent> Handle(RageQuit command)
         {
+            AssertState(GameState.WaitingForMove,GameState.Undecided,GameState.NotStarted);
             var otherMove = _currentMoves.Where(x => x.Key != command.Player).FirstOrDefault();
             var opponent = otherMove.Key;
             yield return new PlayerLeftGame(command.AggregateId, command.Player, opponent);
@@ -145,6 +148,5 @@ namespace RpsGame.Model
         private string _reason;
         private readonly Dictionary<string, Move?> _currentMoves = new Dictionary<string, Move?>(2);
         private readonly Dictionary<string, int> _score = new Dictionary<string, int>(2);
-
     }
 }
