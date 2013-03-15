@@ -1,4 +1,5 @@
 ﻿using System;
+using RpsGame.Model;
 
 namespace RpsGame.Commands
 {
@@ -6,6 +7,14 @@ namespace RpsGame.Commands
     {
         public CreateGame(Guid entityId, string createdBy, string opponent, string reason, int firstTo)
         {
+            if (entityId == Guid.Empty
+                || !firstTo.IsValid()
+                || !createdBy.IsValid()
+                || !opponent.IsValid()
+                || !reason.IsValid()
+            )
+                throw new InvalidCommandException(this);
+
             AggregateId = entityId;
             CreatedBy = createdBy;
             Opponent = opponent;

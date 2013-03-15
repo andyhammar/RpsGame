@@ -3,7 +3,7 @@ using RpsGame.Model;
 
 namespace RpsGame.Events
 {
-    class MoveMade : GameEvent
+    public class MoveMade : GameEvent
     {
         public MoveMade(Guid gameId, string player, Move move) : base(gameId)
         {

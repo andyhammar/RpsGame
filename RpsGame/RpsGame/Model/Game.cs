@@ -1,19 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
+using RpsGame.CommandHandlers;
 using RpsGame.Commands;
+using RpsGame.EventHandlers;
 using RpsGame.Events;
 
 namespace RpsGame.Model
 {
-    public class Game
+    public class Game : IHandleEvent<GameCreated>, IHandleEvent<MoveMade>, IHandleCommand<CreateGame>
     {
-        public void Handle(GameCreated gameCreated)
+        public void Handle(GameCreated ev)
         {
-            _id = gameCreated.GameId;
-            _player1 = gameCreated.CreatedBy;
-            _player2 = gameCreated.Opponent;
-            _firstTo = gameCreated.FirstTo;
-            _reason = gameCreated.Reason;
+            _id = ev.GameId;
+            _player1 = ev.CreatedBy;
+            _player2 = ev.Opponent;
+            _firstTo = ev.FirstTo;
+            _reason = ev.Reason;
         }
 
         public IEnumerable<IEvent> Handle(CreateGame createGame)
@@ -27,15 +29,14 @@ namespace RpsGame.Model
                 createGame.FirstTo) };
         }
 
+        public void Handle(MoveMade ev)
+        {
+            //AndreasHammar [2013-03-15 12:32]: todo
+            _moves[ev.Player] = ev.Move;
+        }
+
         private static void Validate(CreateGame createGame)
         {
-            if (createGame.AggregateId == Guid.Empty
-                || !createGame.FirstTo.IsValid()
-                || !createGame.CreatedBy.IsValid()
-                || !createGame.Opponent.IsValid()
-                || !createGame.Reason.IsValid()
-                )
-                throw new InvalidCommandException(createGame);
         }
 
         private Guid _id;
@@ -43,5 +44,6 @@ namespace RpsGame.Model
         private string _player2;
         private int _firstTo;
         private string _reason;
+        private Dictionary<string, Move?> _moves = new Dictionary<string, Move?>(2);
     }
 }

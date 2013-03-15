@@ -48,6 +48,8 @@
     <Compile Include="Events\IEvent.cs" />
     <Compile Include="Commands\MakeMove.cs" />
     <Compile Include="Model\Game.cs" />
+    <Compile Include="CommandHandlers\IHandleCommand.cs" />
+    <Compile Include="EventHandlers\IHandleEvent.cs" />
     <Compile Include="Model\InvalidCommandException.cs" />
     <Compile Include="Model\Move.cs" />
     <Compile Include="Events\MoveMade.cs" />
@@ -57,10 +59,7 @@
     <Compile Include="Commands\RageQuit.cs" />
     <Compile Include="Events\RoundWon.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="CommandHandlers\" />
-    <Folder Include="EventHandlers\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

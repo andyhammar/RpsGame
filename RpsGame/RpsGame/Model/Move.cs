@@ -1,6 +1,6 @@
 ﻿namespace RpsGame.Model
 {
-    internal enum Move
+    public enum Move
     {
         Rock,
         Paper,

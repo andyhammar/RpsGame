@@ -2,7 +2,7 @@
 
 namespace RpsGame.Events
 {
-    abstract class GameEvent : IEvent
+    public abstract class GameEvent : IEvent
     {
         protected GameEvent(Guid gameId)
         {
