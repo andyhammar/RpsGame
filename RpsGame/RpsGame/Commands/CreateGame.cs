@@ -9,9 +9,9 @@ namespace RpsGame.Commands
         {
             if (entityId == Guid.Empty
                 || !firstTo.IsValid()
-                || !createdBy.IsValid()
-                || !opponent.IsValid()
-                || !reason.IsValid()
+                || !createdBy.IsValidUser()
+                || !opponent.IsValidUser()
+                || !reason.IsValidUser()
             )
                 throw new InvalidCommandException(this);
 

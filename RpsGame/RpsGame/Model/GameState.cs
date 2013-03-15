@@ -3,8 +3,8 @@
     public enum GameState
     {
         NotStarted,
-        GameUndecided,
-        GameOver,
-        GameWaitingForMove
+        Undecided,
+        Over,
+        WaitingForMove
     }
 }

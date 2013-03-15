@@ -42,8 +42,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ApplicationServiceTests.cs" />
     <Compile Include="EventStoreTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RpsTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

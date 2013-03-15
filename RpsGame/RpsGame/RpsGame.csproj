@@ -39,6 +39,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ApplicationService.cs" />
     <Compile Include="EventStore\ConcurrentAppendException.cs" />
     <Compile Include="EventStore\InMemoryEventStore.cs" />
     <Compile Include="EventStore\EventStream.cs" />
@@ -52,6 +53,8 @@
     <Compile Include="Commands\ICommand.cs" />
     <Compile Include="Events\IEvent.cs" />
     <Compile Include="Commands\MakeMove.cs" />
+    <Compile Include="Events\RpsMoveComparer.cs" />
+    <Compile Include="IApplicationService.cs" />
     <Compile Include="Model\Game.cs" />
     <Compile Include="CommandHandlers\IHandleCommand.cs" />
     <Compile Include="EventHandlers\IHandleEvent.cs" />
