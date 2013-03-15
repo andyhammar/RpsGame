@@ -2,7 +2,7 @@
 
 namespace RpsGame.Commands
 {
-    class RageQuit : ICommand
+    public class RageQuit : ICommand
     {
         public Guid AggregateId { get; private set; }
         public string Player { get; private set; }

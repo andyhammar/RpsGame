@@ -10,7 +10,8 @@ namespace RpsGame.Model
 {
     public class Game : 
         IHandleCommand<CreateGame>, 
-        IHandleCommand<MakeMove>, 
+        IHandleCommand<MakeMove>,
+        IHandleCommand<RageQuit>,
         IHandleEvent<GameCreated>, 
         IHandleEvent<MoveMade>, 
         IHandleEvent<RoundWon>, 
@@ -117,6 +118,14 @@ namespace RpsGame.Model
 
             if (_currentMoves[makeMove.Player].HasValue)
                 throw new InvalidCommandException(makeMove);
+        }
+
+        public IEnumerable<IEvent> Handle(RageQuit command)
+        {
+            var otherMove = _currentMoves.Where(x => x.Key != command.Player).FirstOrDefault();
+            var opponent = otherMove.Key;
+            yield return new PlayerLeftGame(command.AggregateId, command.Player, opponent);
+            yield return new GameWon(command.AggregateId, opponent, command.Player);
         }
 
         private void Validate(CreateGame createGame)

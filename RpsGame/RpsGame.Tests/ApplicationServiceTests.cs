@@ -86,5 +86,19 @@ namespace RpsGame.Tests
             Assert.That(last, Is.Not.Null.And.Property("Winner").EqualTo("you"));
         }
 
+        [Test]
+        public void Should_finish_game_after_rageQuit()
+        {
+            var entityId = Guid.NewGuid();
+            _applicationService.Handle(new CreateGame(entityId, "me", "you", "lunch", 2));
+            _applicationService.Handle(new MakeMove(entityId, "you", Move.Paper));
+            _applicationService.Handle(new RageQuit(entityId, "me"));
+
+            var stream = _eventStore.LoadEventStream(entityId);
+
+            var last = stream.Last() as GameWon;
+            Assert.That(last, Is.Not.Null.And.Property("Winner").EqualTo("you"));
+            Assert.That(stream, Has.Some.AssignableFrom<PlayerLeftGame>());
+        }
     }
 }

@@ -2,7 +2,7 @@
 
 namespace RpsGame.Events
 {
-    class PlayerLeftGame : GameEvent
+    public class PlayerLeftGame : GameEvent
     {
         public PlayerLeftGame(Guid gameId, string player, string opponent) : base(gameId)
         {
