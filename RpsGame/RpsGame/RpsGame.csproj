@@ -39,6 +39,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EventStore\EventStore.cs" />
+    <Compile Include="EventStore\EventStream.cs" />
+    <Compile Include="EventStore\IEventStream.cs" />
+    <Compile Include="EventStore\IEventStore.cs" />
     <Compile Include="Events\RoundTied.cs" />
     <Compile Include="Commands\CreateGame.cs" />
     <Compile Include="Events\GameCreated.cs" />
@@ -50,6 +54,7 @@
     <Compile Include="Model\Game.cs" />
     <Compile Include="CommandHandlers\IHandleCommand.cs" />
     <Compile Include="EventHandlers\IHandleEvent.cs" />
+    <Compile Include="Model\GameState.cs" />
     <Compile Include="Model\InvalidCommandException.cs" />
     <Compile Include="Model\Move.cs" />
     <Compile Include="Events\MoveMade.cs" />
