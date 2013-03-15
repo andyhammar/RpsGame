@@ -50,6 +50,12 @@ namespace RpsGame.Model
         private void Validate(MakeMove makeMove)
         {
             AssertState(GameState.GameUndecided, GameState.GameWaitingForMove);
+            if (_moves.ContainsKey(makeMove.Player))
+        }
+
+        private void Validate(CreateGame createGame)
+        {
+            AssertState(GameState.NotStarted);
         }
 
         private void AssertState(params GameState[] states)
@@ -58,29 +64,13 @@ namespace RpsGame.Model
                 throw new InvalidCommandException();
         }
 
-        private void Validate(CreateGame createGame)
-        {
-            AssertState(GameState.NotStarted);
-        }
-
-        private void AssertState(GameState state)
-        {
-            if (_state != state)
-                throw new InvalidCommandException();
-        }
-
         private Guid _id;
-
         private GameState _state;
-
+        //todo - remove and only use dict
         private string _player1;
-
         private string _player2;
-
         private int _firstTo;
-
         private string _reason;
-
         private Dictionary<string, Move?> _moves = new Dictionary<string, Move?>(2);
     }
 }
