@@ -9,22 +9,39 @@ namespace RpsGame.Model
     {
         public void Handle(GameCreated gameCreated)
         {
-            Id = gameCreated.GameId;
-            Player1 = gameCreated.CreatedBy;
-            Player2 = gameCreated.Opponent;
-            FirstTo = gameCreated.FirstTo;
-            Reason = gameCreated.Reason;
+            _id = gameCreated.GameId;
+            _player1 = gameCreated.CreatedBy;
+            _player2 = gameCreated.Opponent;
+            _firstTo = gameCreated.FirstTo;
+            _reason = gameCreated.Reason;
         }
 
         public IEnumerable<IEvent> Handle(CreateGame createGame)
         {
-            return new[] { new GameCreated(createGame.AggregateId, createGame.CreatedBy, createGame.Opponent, createGame.Reason, createGame.FirstTo) };
+            Validate(createGame);
+            return new[] { new GameCreated(
+                createGame.AggregateId, 
+                createGame.CreatedBy, 
+                createGame.Opponent, 
+                createGame.Reason, 
+                createGame.FirstTo) };
         }
 
-        private Guid Id { get; set; }
-        private string Player1 { get; set; }
-        private string Player2 { get; set; }
-        private int FirstTo { get; set; }
-        private string Reason { get; set; }
+        private static void Validate(CreateGame createGame)
+        {
+            if (createGame.AggregateId == Guid.Empty
+                || !createGame.FirstTo.IsValid()
+                || !createGame.CreatedBy.IsValid()
+                || !createGame.Opponent.IsValid()
+                || !createGame.Reason.IsValid()
+                )
+                throw new InvalidCommandException(createGame);
+        }
+
+        private Guid _id;
+        private string _player1;
+        private string _player2;
+        private int _firstTo;
+        private string _reason;
     }
 }
