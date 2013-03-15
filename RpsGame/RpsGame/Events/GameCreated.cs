@@ -2,7 +2,7 @@
 
 namespace RpsGame.Events
 {
-    class GameCreated : GameEvent
+    public class GameCreated : GameEvent
     {
         public GameCreated(Guid gameId, string createdBy, string opponent, string reason, int firstTo) : base(gameId)
         {
