@@ -8,7 +8,7 @@ using RpsGame.Events;
 
 namespace RpsGame.Model
 {
-    public class Game : IHandleEvent<GameCreated>, IHandleEvent<MoveMade>, IHandleCommand<CreateGame>, IHandleCommand<MakeMove>
+    public class Game : IHandleEvent<GameCreated>, IHandleEvent<MoveMade>, IHandleCommand<CreateGame>, IHandleCommand<MakeMove>, IHandleEvent<RoundWon>, IHandleEvent<GameWon>
     {
         public Game()
         {
@@ -21,7 +21,9 @@ namespace RpsGame.Model
             _firstTo = ev.FirstTo;
             _reason = ev.Reason;
             _currentMoves.Add(ev.CreatedBy, null);
+            _score.Add(ev.CreatedBy, 0);
             _currentMoves.Add(ev.Opponent, null);
+            _score.Add(ev.Opponent, 0);
 
             _state = GameState.Undecided;
         }
@@ -43,10 +45,22 @@ namespace RpsGame.Model
             _state = GameState.WaitingForMove;
         }
 
+        public void Handle(GameWon ev)
+        {
+            _state = GameState.Over;
+        }
+
+        public void Handle(RoundWon ev)
+        {
+            _score[ev.Winner] = _score[ev.Winner] + 1;
+            _state = GameState.Undecided;
+            _currentMoves[ev.Winner] = null;
+            _currentMoves[ev.Loser] = null;
+        }
+
         public IEnumerable<IEvent> Handle(MakeMove command)
         {
             Validate(command);
-
             yield return new MoveMade(command.AggregateId, command.Player, command.Move);
 
             if (_state == GameState.WaitingForMove)
@@ -54,9 +68,13 @@ namespace RpsGame.Model
                 var roundEvent = GetRoundEvent(command);
                 yield return roundEvent;
 
+                var roundWon = roundEvent as RoundWon;
 
+                if (roundWon == null)
+                    yield break;
+                if(_score[roundWon.Winner] == _firstTo - 1)
+                    yield return new GameWon(command.AggregateId,roundWon.Winner,roundWon.Loser);
             }
-
         }
 
         private IEvent GetRoundEvent(MakeMove command)
@@ -96,6 +114,8 @@ namespace RpsGame.Model
         private GameState _state;
         private int _firstTo;
         private string _reason;
-        private Dictionary<string, Move?> _currentMoves = new Dictionary<string, Move?>(2);
+        private readonly Dictionary<string, Move?> _currentMoves = new Dictionary<string, Move?>(2);
+        private readonly Dictionary<string, int> _score = new Dictionary<string, int>(2);
+
     }
 }

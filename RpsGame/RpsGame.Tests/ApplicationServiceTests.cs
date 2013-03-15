@@ -21,12 +21,28 @@ namespace RpsGame.Tests
         }
 
         [Test]
-        public void Should_win_game_after_two_moves()
+        public void Should_win_a_round_after_two_moves()
         {
             var entityId = Guid.NewGuid();
-            _applicationService.Handle(new CreateGame(entityId,"me","you","lunch",1));
+            _applicationService.Handle(new CreateGame(entityId,"me","you","lunch",2));
             _applicationService.Handle(new MakeMove(entityId,"me",Move.Paper));
             _applicationService.Handle(new MakeMove(entityId,"you",Move.Rock));
+
+            var stream = _eventStore.LoadEventStream(entityId);
+
+            var last = stream.Last();
+            Assert.That(last,Is.AssignableTo<RoundWon>());
+        }        
+        
+        [Test]
+        public void Should_win_a_game_after_all_rounds_won()
+        {
+            var entityId = Guid.NewGuid();
+            _applicationService.Handle(new CreateGame(entityId,"me","you","lunch",2));
+            _applicationService.Handle(new MakeMove(entityId,"me",Move.Paper));
+            _applicationService.Handle(new MakeMove(entityId,"you",Move.Rock));
+            _applicationService.Handle(new MakeMove(entityId,"me",Move.Paper));
+            _applicationService.Handle(new MakeMove(entityId, "you", Move.Rock));
 
             var stream = _eventStore.LoadEventStream(entityId);
 
