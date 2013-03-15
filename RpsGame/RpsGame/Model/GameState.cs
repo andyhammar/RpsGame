@@ -2,6 +2,7 @@
 {
     public enum GameState
     {
+        NotStarted,
         GameUndecided,
         GameOver,
         GameWaitingForMove

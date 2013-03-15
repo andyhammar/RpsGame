@@ -7,8 +7,13 @@ using RpsGame.Events;
 
 namespace RpsGame.Model
 {
-    public class Game : IHandleEvent<GameCreated>, IHandleEvent<MoveMade>, IHandleCommand<CreateGame>
+    public class Game : IHandleEvent<GameCreated>, IHandleEvent<MoveMade>, IHandleCommand<CreateGame>, IHandleCommand<MakeMove>
     {
+        public Game()
+        {
+            _state = GameState.NotStarted;
+        }
+
         public void Handle(GameCreated ev)
         {
             _id = ev.GameId;
@@ -35,15 +40,40 @@ namespace RpsGame.Model
             _moves[ev.Player] = ev.Move;
         }
 
-        private static void Validate(CreateGame createGame)
+        public IEnumerable<IEvent> Handle(MakeMove command)
         {
+            Validate(command);
+            throw new NotImplementedException();
+        }
+
+        private void Validate(MakeMove createGame)
+        {
+            
+        }
+
+        private void Validate(CreateGame createGame)
+        {
+            AssertState(GameState.NotStarted);
+        }
+
+        private void AssertState(GameState state)
+        {
+            if (_state != state)
+                throw new InvalidCommandException();
         }
 
         private Guid _id;
+
+        private GameState _state;
+
         private string _player1;
+
         private string _player2;
+
         private int _firstTo;
+
         private string _reason;
+
         private Dictionary<string, Move?> _moves = new Dictionary<string, Move?>(2);
     }
 }

@@ -1,9 +1,9 @@
-﻿using System;
+﻿    using System;
 using RpsGame.Model;
 
 namespace RpsGame.Commands
 {
-    class MakeMove : ICommand
+    public class MakeMove : ICommand
     {
         public MakeMove(Guid entityId, string player, Move move)
         {
