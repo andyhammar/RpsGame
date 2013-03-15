@@ -30,6 +30,8 @@ namespace RpsGame
 
             //store events
             _eventStore.Append(command.AggregateId, stream.Version, events);
+
+
         }
     }
 }
