@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using RpsGame.CommandHandlers;
 using RpsGame.Commands;
 using RpsGame.EventHandlers;
@@ -46,9 +47,15 @@ namespace RpsGame.Model
             throw new NotImplementedException();
         }
 
-        private void Validate(MakeMove createGame)
+        private void Validate(MakeMove makeMove)
         {
-            
+            AssertState(GameState.GameUndecided, GameState.GameWaitingForMove);
+        }
+
+        private void AssertState(params GameState[] states)
+        {
+            if (!states.Any(s => s == _state))
+                throw new InvalidCommandException();
         }
 
         private void Validate(CreateGame createGame)
