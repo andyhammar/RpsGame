@@ -4,7 +4,7 @@ using RpsGame.Events;
 
 namespace RpsGame.EventStore
 {
-    class EventStore : IEventStore
+    public class InMemoryEventStore : IEventStore
     {
         private readonly Dictionary<Guid, Tuple<long, List<IEvent>>> _streams = new Dictionary<Guid, Tuple<long, List<IEvent>>>();
         private readonly object _lock = new object();
@@ -32,11 +32,7 @@ namespace RpsGame.EventStore
 
         private Tuple<long, List<IEvent>> GetEnsuredStream(Guid streamId, long version)
         {
-            return _streams[streamId] ?? Tuple.Create(version, new List<IEvent>());
+            return _streams.ContainsKey(streamId) ? _streams[streamId]: Tuple.Create(version, new List<IEvent>());
         }
-    }
-
-    internal class ConcurrentAppendException : Exception
-    {
     }
 }
