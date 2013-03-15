@@ -16,26 +16,20 @@ namespace RpsGame
 
         public void Handle(ICommand command)
         {
-            // TODO: load events
+            // load events
             var stream = _eventStore.LoadEventStream(command.AggregateId);
 
-            // TODO: instantiate blank aggregate
+            //instantiate blank aggregate
             var game = new Game() as dynamic;
 
-            // TODO: replay events
+            //replay events
             stream.ToList().ForEach(x => game.Handle((dynamic) x));
 
-            // TODO: execute command
+            //execute command
             var events = game.Handle((dynamic) command);
 
-            // TODO: store events
+            //store events
             _eventStore.Append(command.AggregateId, stream.Version, events);
         }
     }
 }
-
-// MAGIC STUFF
-
-//var aggregate = CreateNewAggregate() as dynamic;
-
-//var events = aggregate.Handle((dynamic) command);}

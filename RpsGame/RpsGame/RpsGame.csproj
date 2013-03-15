@@ -53,7 +53,6 @@
     <Compile Include="Commands\ICommand.cs" />
     <Compile Include="Events\IEvent.cs" />
     <Compile Include="Commands\MakeMove.cs" />
-    <Compile Include="Events\RpsMoveComparer.cs" />
     <Compile Include="IApplicationService.cs" />
     <Compile Include="Model\Game.cs" />
     <Compile Include="CommandHandlers\IHandleCommand.cs" />

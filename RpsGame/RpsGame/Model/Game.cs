@@ -25,12 +25,8 @@ namespace RpsGame.Model
 
         public void Handle(GameCreated ev)
         {
-            _id = ev.GameId;
             _firstTo = ev.FirstTo;
-            _reason = ev.Reason;
-            _currentMoves.Add(ev.CreatedBy, null);
             _score.Add(ev.CreatedBy, 0);
-            _currentMoves.Add(ev.Opponent, null);
             _score.Add(ev.Opponent, 0);
 
             _state = GameState.Undecided;
@@ -52,7 +48,7 @@ namespace RpsGame.Model
 
         public void Handle(MoveMade ev)
         {
-            _currentMoves[ev.Player] = ev.Move;
+            _lastMove = Tuple.Create(ev.Player, ev.Move);
             _state = GameState.WaitingForMove;
         }
 
@@ -75,10 +71,7 @@ namespace RpsGame.Model
         private void NewRound()
         {
             _state = GameState.Undecided;
-            foreach (var key in _currentMoves.Keys.ToList())
-            {
-                _currentMoves[key] = null;
-            }
+            _lastMove = null;
         }
 
 
@@ -87,45 +80,43 @@ namespace RpsGame.Model
             Validate(command);
             yield return new MoveMade(command.AggregateId, command.Player, command.Move);
 
-            if (_state == GameState.WaitingForMove)
-            {
-                var roundEvent = GetRoundEvent(command);
-                yield return roundEvent;
+            if (_state != GameState.WaitingForMove) yield break;
 
-                var roundWon = roundEvent as RoundWon;
+            var roundEvent = GetRoundEvent(command);
+            yield return roundEvent;
 
-                if (roundWon == null)
-                    yield break;
-                if (_score[roundWon.Winner] == _firstTo - 1)
-                    yield return new GameWon(command.AggregateId, roundWon.Winner, roundWon.Loser);
-            }
+            var roundWon = roundEvent as RoundWon;
+
+            if (roundWon == null)
+                yield break;
+            if (_score[roundWon.Winner] == _firstTo - 1)
+                yield return new GameWon(command.AggregateId, roundWon.Winner, roundWon.Loser);
         }
 
         private IEvent GetRoundEvent(MakeMove command)
         {
-            var otherMove = _currentMoves.Where(x => x.Key != command.Player).FirstOrDefault();
-            if (otherMove.Value == command.Move)
-                return new RoundTied(command.AggregateId, command.Player, otherMove.Key);
-            if (command.Move.IsWinner(otherMove.Value.Value))
-                return new RoundWon(command.AggregateId, command.Player, otherMove.Key);
-            return new RoundWon(command.AggregateId, otherMove.Key, command.Player);
+            if (_lastMove.Item2 == command.Move)
+                return new RoundTied(command.AggregateId, command.Player, _lastMove.Item1);
+            if (command.Move.IsWinner(_lastMove.Item2))
+                return new RoundWon(command.AggregateId, command.Player, _lastMove.Item1);
+            return new RoundWon(command.AggregateId, _lastMove.Item1, command.Player);
         }
 
         private void Validate(MakeMove makeMove)
         {
             AssertState(GameState.Undecided, GameState.WaitingForMove);
 
-            if (!_currentMoves.ContainsKey(makeMove.Player))
+            if (!_score.ContainsKey(makeMove.Player))
                 throw new InvalidCommandException(makeMove);
 
-            if (_currentMoves[makeMove.Player].HasValue)
+            if (_lastMove != null && _lastMove.Item1 == makeMove.Player)
                 throw new InvalidCommandException(makeMove);
         }
 
         public IEnumerable<IEvent> Handle(RageQuit command)
         {
-            AssertState(GameState.WaitingForMove,GameState.Undecided,GameState.NotStarted);
-            var otherMove = _currentMoves.Where(x => x.Key != command.Player).FirstOrDefault();
+            AssertState(GameState.WaitingForMove, GameState.Undecided, GameState.NotStarted);
+            var otherMove = _score.FirstOrDefault(x => x.Key != command.Player);
             var opponent = otherMove.Key;
             yield return new PlayerLeftGame(command.AggregateId, command.Player, opponent);
             yield return new GameWon(command.AggregateId, opponent, command.Player);
@@ -142,11 +133,9 @@ namespace RpsGame.Model
                 throw new InvalidCommandException();
         }
 
-        private Guid _id;
         private GameState _state;
         private int _firstTo;
-        private string _reason;
-        private readonly Dictionary<string, Move?> _currentMoves = new Dictionary<string, Move?>(2);
+        private Tuple<string, Move> _lastMove;
         private readonly Dictionary<string, int> _score = new Dictionary<string, int>(2);
     }
 }
