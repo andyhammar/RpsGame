@@ -12,7 +12,6 @@ namespace RpsGame.Model
 
         public InvalidCommandException()
         {
-            throw new NotImplementedException();
         }
 
         public ICommand FailedCommand { get; private set; }

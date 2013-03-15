@@ -49,5 +49,42 @@ namespace RpsGame.Tests
             var last = stream.Last();
             Assert.That(last,Is.AssignableTo<GameWon>());
         }
+
+        [Test]
+        public void Should_tie_a_round_when_moved_equal()
+        {
+            var entityId = Guid.NewGuid();
+            _applicationService.Handle(new CreateGame(entityId, "me", "you", "lunch", 2));
+            _applicationService.Handle(new MakeMove(entityId, "me", Move.Rock));
+            _applicationService.Handle(new MakeMove(entityId, "you", Move.Rock));
+
+            var stream = _eventStore.LoadEventStream(entityId);
+
+            var last = stream.Last();
+            Assert.That(last, Is.AssignableTo<RoundTied>());
+        }
+
+        [Test]
+        public void Should_win_a_game_with_many_rounds()
+        {
+            var entityId = Guid.NewGuid();
+            _applicationService.Handle(new CreateGame(entityId, "me", "you", "lunch", 2));
+            _applicationService.Handle(new MakeMove(entityId, "you", Move.Paper));
+            _applicationService.Handle(new MakeMove(entityId, "me", Move.Rock));
+            _applicationService.Handle(new MakeMove(entityId, "me", Move.Paper));
+            _applicationService.Handle(new MakeMove(entityId, "you", Move.Rock));
+            _applicationService.Handle(new MakeMove(entityId, "me", Move.Rock));
+            _applicationService.Handle(new MakeMove(entityId, "you", Move.Rock));
+            _applicationService.Handle(new MakeMove(entityId, "me", Move.Rock));
+            _applicationService.Handle(new MakeMove(entityId, "you", Move.Rock));
+            _applicationService.Handle(new MakeMove(entityId, "me", Move.Rock));
+            _applicationService.Handle(new MakeMove(entityId, "you", Move.Paper));
+
+            var stream = _eventStore.LoadEventStream(entityId);
+
+            var last = stream.Last() as GameWon;
+            Assert.That(last, Is.Not.Null.And.Property("Winner").EqualTo("you"));
+        }
+
     }
 }

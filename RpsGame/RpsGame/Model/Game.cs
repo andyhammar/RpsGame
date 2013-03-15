@@ -8,7 +8,14 @@ using RpsGame.Events;
 
 namespace RpsGame.Model
 {
-    public class Game : IHandleEvent<GameCreated>, IHandleEvent<MoveMade>, IHandleCommand<CreateGame>, IHandleCommand<MakeMove>, IHandleEvent<RoundWon>, IHandleEvent<GameWon>
+    public class Game : 
+        IHandleCommand<CreateGame>, 
+        IHandleCommand<MakeMove>, 
+        IHandleEvent<GameCreated>, 
+        IHandleEvent<MoveMade>, 
+        IHandleEvent<RoundWon>, 
+        IHandleEvent<GameWon>,
+        IHandleEvent<RoundTied>
     {
         public Game()
         {
@@ -53,10 +60,23 @@ namespace RpsGame.Model
         public void Handle(RoundWon ev)
         {
             _score[ev.Winner] = _score[ev.Winner] + 1;
-            _state = GameState.Undecided;
-            _currentMoves[ev.Winner] = null;
-            _currentMoves[ev.Loser] = null;
+            NewRound();
         }
+
+        public void Handle(RoundTied ev)
+        {
+            NewRound();
+        }
+
+        private void NewRound()
+        {
+            _state = GameState.Undecided;
+            foreach (var key in _currentMoves.Keys.ToList())
+            {
+                _currentMoves[key] = null;
+            }
+        }
+
 
         public IEnumerable<IEvent> Handle(MakeMove command)
         {

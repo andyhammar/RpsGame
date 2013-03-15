@@ -2,7 +2,7 @@
 
 namespace RpsGame.Events
 {
-    class RoundTied : GameEvent
+    public class RoundTied : GameEvent
     {
         public RoundTied(Guid gameId, string player1, string player2)
             : base(gameId)
