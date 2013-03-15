@@ -34,6 +34,7 @@ namespace RpsGame.Tests
             CreateWinningGame("me", "you");
 
             Assert.That(_highScoreProjection.HighScores["me"], Is.EqualTo(3));
+            Assert.That(_highScoreProjection.HighScores["you"], Is.EqualTo(1));
         }
 
         private void CreateWinningGame(string createdBy, string opponent)
