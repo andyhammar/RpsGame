@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using RpsGame.Commands;
 using RpsGame.EventStore;
-using RpsGame.Events;
 using RpsGame.Model;
 using RpsGame.Query;
+using System;
 
 namespace RpsGame.Tests
 {

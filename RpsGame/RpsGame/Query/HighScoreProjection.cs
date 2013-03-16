@@ -28,6 +28,6 @@ namespace RpsGame.Query
         public Dictionary<string, int> HighScores
         {
             get { return _highScores; }
-        } 
+        }
     }
 }
